@@ -33,6 +33,7 @@ export default function TopPage() {
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={() => navigate('/search')} style={{ padding: '4px 12px' }}>カテゴリー検索</button>
           <button onClick={() => navigate('/accounts')} style={{ padding: '4px 12px' }}>口座管理</button>
+          <button onClick={() => navigate('/summary')} style={{ padding: '4px 12px' }}>月間サマリー</button>
           <button onClick={async () => { await logout(); navigate('/login') }} style={{ padding: '4px 12px' }}>ログアウト</button>
         </div>
       </div>
