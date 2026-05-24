@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>月間収支</title>
+</head>
+<body>
+<h1 th:text="${year + '年 ' + month + '月の収支'}"></h1>
+
+<p>収入合計：<span th:text="${summary.incomeTotal}"></span>円</p>
+<p>支出合計：<span th:text="${summary.expenseTotal}"></span>円</p>
+<p>収支：<span th:text="${summary.balance}"></span>円</p>
+</body>
+</html>

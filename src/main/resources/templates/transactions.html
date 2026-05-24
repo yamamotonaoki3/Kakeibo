@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>収支追加</title>
+</head>
+<body>
+    <a href = "/">トップページ</a>
+    <h1>一覧・追加</h1>
+    <hr>
+    <h2>収支追加</h2>
+
+    <form action="/transactions" th:object = "${transaction}" method="post">
+
+        <p>日付：<input type="date" th:field="*{date}" required></p>
+        <p th:errors="*{date}"></p>
+        <p>金額：<input type="number" th:field="*{amount}" required></p>
+        <p th:errors="*{amount}"></p>
+       カテゴリ： <select th:field="*{category}">
+            <option value="">選択してください</option>
+            <option th:each="cate : ${T(com.example.Kakeibo.Model.Transaction.Category).values()}"
+                    th:value="${cate}"
+                    th:text="${cate.label}">
+            </option>
+        </select>
+        <p th:errors="*{category}"></p>
+        <p>メモ：<input type="text" th:field="*{memo}" ></p>
+        <p th:errors="*{memo}"></p>
+        収入・支出：<select th:field="*{type}">
+            <option value="">選択してください</option>
+            <option th:each="typ : ${T(com.example.Kakeibo.Model.Transaction.TransactionType).values()}"
+                    th:value="${typ}"
+                    th:text="${typ.label}">
+            </option>
+        </select>
+        <p th:errors="*{type}"></p>
+        <p><input type="submit" value="登録" ></p>
+    </form>
+    <hr>
+    <h2>一覧</h2>
+    <table>
+        <tr>
+            <th></th>
+            <th></th>
+            <th>日付</th>
+            <th>金額</th>
+            <th>カテゴリ</th>
+            <th>メモ</th>
+            <th>収入・支出</th>
+        </tr>
+        <tr th:each = "tran : ${transactionList} ">
+            <td>
+                <form th:action="@{/transactions/id/{id}/delete(id=${tran.id})}" method="post">
+                        <input type="hidden"  name="id" th:value="${tran.id}">
+                        <input type = "submit" value="削除" >
+                    </form>
+            </td>
+            <td>
+              <a th:href="@{/transactions/id/{id}(id=${tran.id})}">
+                  更新
+              </a>
+
+            </td>
+
+            <td>|<span th:text="${#temporals.format(tran.date,'yyyy/MM/dd')}"></span></td>
+            <td>|<span th:text="${tran.amount}"></span>円</td>
+            <td>|<span th:text="${tran.category}"></span>|</td>
+            <td>|<span th:text="${tran.memo}"></span></td>
+            <td>|<span th:text="${tran.type}"></span>|</td>
+        </tr>
+    </table>
+    <hr>
+    <h2>集計</h2>
+
+    <form action="/summary" method="get">
+        <input type="number" name="year" placeholder="年">
+        <input type="number" name="month" placeholder="月">
+        <button type="submit">集計</button>
+    </form>
+</body>
+</html>
