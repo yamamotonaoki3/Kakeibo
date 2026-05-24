@@ -27,8 +27,9 @@ export default function AccountsPage() {
       }
       setForm({ name: '', initialBalance: '0' })
       load()
-    } catch (err: any) {
-      setError(err.response?.data?.message || '保存に失敗しました')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '保存に失敗しました'
+      setError(msg)
     }
   }
 

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 import client from '../api/client'
-import type { CalendarData } from '../types'
+import type { Account, CalendarData } from '../types'
 
 const DAYS = ['日', '月', '火', '水', '木', '金', '土']
 
@@ -17,7 +17,7 @@ export default function TopPage() {
 
   useEffect(() => {
     client.get<CalendarData>(`/calendar?year=${year}&month=${month}`).then(r => setCalendar(r.data))
-    client.get<any[]>('/accounts').then(r => setTotalBalance(r.data.reduce((s, a) => s + a.balance, 0)))
+    client.get<Account[]>('/accounts').then(r => setTotalBalance(r.data.reduce((s, a) => s + a.balance, 0)))
   }, [year, month])
 
   const prev = () => { if (month === 1) { setYear(y => y - 1); setMonth(12) } else setMonth(m => m - 1) }
@@ -31,6 +31,7 @@ export default function TopPage() {
           <span style={{ color: '#666', marginLeft: 8 }}>(@{user?.username})</span>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={() => navigate('/search')} style={{ padding: '4px 12px' }}>カテゴリー検索</button>
           <button onClick={() => navigate('/accounts')} style={{ padding: '4px 12px' }}>口座管理</button>
           <button onClick={async () => { await logout(); navigate('/login') }} style={{ padding: '4px 12px' }}>ログアウト</button>
         </div>

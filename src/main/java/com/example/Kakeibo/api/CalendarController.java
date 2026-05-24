@@ -42,8 +42,11 @@ public class CalendarController {
             LocalDate date = (LocalDate) row[0];
             TransactionType type = (TransactionType) row[1];
             Long amount = (Long) row[2];
-            if (type == TransactionType.INCOME) dailyIncome.put(date, amount);
-            else dailyExpense.put(date, amount);
+            if (type == TransactionType.INCOME) {
+                dailyIncome.put(date, amount);
+            } else {
+                dailyExpense.put(date, amount);
+            }
         }
 
         List<Map<String, Object>> days = new ArrayList<>();

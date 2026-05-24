@@ -33,11 +33,17 @@ public class TransactionController {
 
     @GetMapping
     public List<Map<String, Object>> list(@RequestParam(required = false) LocalDate date,
+                                          @RequestParam(required = false) String category,
                                           Authentication auth) {
         User user = userService.findByUsername(auth.getName());
-        List<Transaction> transactions = date != null
-                ? transactionService.findByUserAndDate(user, date)
-                : transactionService.findByUser(user);
+        List<Transaction> transactions;
+        if (category != null) {
+            transactions = transactionService.findByUserAndCategory(user, Category.valueOf(category));
+        } else if (date != null) {
+            transactions = transactionService.findByUserAndDate(user, date);
+        } else {
+            transactions = transactionService.findByUser(user);
+        }
         return transactions.stream().map(this::toMap).toList();
     }
 

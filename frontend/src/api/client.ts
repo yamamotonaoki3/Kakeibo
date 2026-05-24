@@ -4,12 +4,7 @@ const client = axios.create({ baseURL: '/api', withCredentials: true })
 
 client.interceptors.response.use(
   res => res,
-  err => {
-    if (err.response?.status === 401 && !window.location.pathname.includes('/login')) {
-      window.location.href = '/login'
-    }
-    return Promise.reject(err)
-  }
+  err => Promise.reject(err)
 )
 
 export default client

@@ -23,4 +23,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT t.date, t.type, COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.user.id = :userId AND t.date BETWEEN :start AND :end GROUP BY t.date, t.type ORDER BY t.date")
     List<Object[]> sumByDayAndTypeForUser(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    List<Transaction> findByUserIdAndCategoryOrderByDateDesc(Long userId, Category category);
 }
