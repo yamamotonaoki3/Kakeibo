@@ -31,6 +31,10 @@ public class TransactionService {
         return transactionRepository.findByUserIdAndDateBetweenOrderByDateDesc(user.getId(), start, end);
     }
 
+    public List<Transaction> findByUserAndCategory(User user, Category category) {
+        return transactionRepository.findByUserIdAndCategoryOrderByDateDesc(user.getId(), category);
+    }
+
     public Transaction findById(Long id, User user) {
         return transactionRepository.findById(id)
                 .filter(t -> t.getUser().getId().equals(user.getId()))

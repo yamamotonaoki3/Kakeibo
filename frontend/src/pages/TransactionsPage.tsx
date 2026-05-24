@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import client from '../api/client'
 import type { Transaction, Account, Category, TransactionType } from '../types'
@@ -20,9 +20,9 @@ export default function TransactionsPage() {
   })
   const [error, setError] = useState('')
 
-  const load = () => {
+  const load = useCallback(() => {
     client.get<Transaction[]>(`/transactions?date=${dateParam}`).then(r => setTransactions(r.data))
-  }
+  }, [dateParam])
 
   useEffect(() => {
     load()
@@ -30,7 +30,7 @@ export default function TransactionsPage() {
       setAccounts(r.data)
       if (r.data.length > 0) setForm(f => ({ ...f, accountId: String(r.data[0].id) }))
     })
-  }, [dateParam])
+  }, [load])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,8 +45,9 @@ export default function TransactionsPage() {
       }
       setForm(f => ({ ...f, amount: '', memo: '' }))
       load()
-    } catch (err: any) {
-      setError(err.response?.data?.message || '保存に失敗しました')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '保存に失敗しました'
+      setError(msg)
     }
   }
 

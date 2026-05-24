@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from './context/AuthContext'
+import { AuthProvider } from './context/AuthProvider'
+import { useAuth } from './context/useAuth'
 import LoginPage from './pages/LoginPage'
 import TopPage from './pages/TopPage'
 import TransactionsPage from './pages/TransactionsPage'
 import AccountsPage from './pages/AccountsPage'
+import SearchPage from './pages/SearchPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -18,6 +20,7 @@ function AppRoutes() {
       <Route path="/" element={<PrivateRoute><TopPage /></PrivateRoute>} />
       <Route path="/transactions" element={<PrivateRoute><TransactionsPage /></PrivateRoute>} />
       <Route path="/accounts" element={<PrivateRoute><AccountsPage /></PrivateRoute>} />
+      <Route path="/search" element={<PrivateRoute><SearchPage /></PrivateRoute>} />
     </Routes>
   )
 }

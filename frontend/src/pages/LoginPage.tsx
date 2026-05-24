@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 import client from '../api/client'
 
 export default function LoginPage() {
@@ -28,8 +28,9 @@ export default function LoginPage() {
       await client.post('/auth/register', form)
       await login(form.username, form.password)
       navigate('/')
-    } catch (err: any) {
-      setError(err.response?.data?.message || '登録に失敗しました')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '登録に失敗しました'
+      setError(msg)
     }
   }
 
