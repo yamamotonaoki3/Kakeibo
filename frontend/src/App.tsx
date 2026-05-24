@@ -6,6 +6,7 @@ import TopPage from './pages/TopPage'
 import TransactionsPage from './pages/TransactionsPage'
 import AccountsPage from './pages/AccountsPage'
 import SearchPage from './pages/SearchPage'
+import SummaryPage from './pages/SummaryPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -21,6 +22,7 @@ function AppRoutes() {
       <Route path="/transactions" element={<PrivateRoute><TransactionsPage /></PrivateRoute>} />
       <Route path="/accounts" element={<PrivateRoute><AccountsPage /></PrivateRoute>} />
       <Route path="/search" element={<PrivateRoute><SearchPage /></PrivateRoute>} />
+      <Route path="/summary" element={<PrivateRoute><SummaryPage /></PrivateRoute>} />
     </Routes>
   )
 }
