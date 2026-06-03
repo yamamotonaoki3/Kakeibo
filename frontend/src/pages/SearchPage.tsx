@@ -16,7 +16,7 @@ export default function SearchPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await client.get<Transaction[]>('/transactions', { params: { category } })
+      const res = await client.get<Transaction[]>(`/transactions?category=${category}`)
       setResults(res.data)
     } finally {
       setLoading(false)

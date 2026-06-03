@@ -1,0 +1,91 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  background: var(--color-bg);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--color-primary);
+  box-shadow: 0 2px 6px rgba(0,0,0,.18);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.userArea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.displayName {
+  color: rgba(255,255,255,0.9);
+  font-size: 13px;
+}
+
+.main {
+  flex: 1;
+  padding: 16px;
+  padding-bottom: calc(var(--tabbar-height) + 20px);
+  overflow-y: auto;
+}
+
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-width);
+  height: var(--tabbar-height);
+  display: flex;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  z-index: 100;
+}
+
+.tabItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-sub);
+  font-size: 10px;
+  padding: 6px 0;
+  transition: color 0.15s;
+}
+
+.tabItem:hover { color: var(--color-primary); }
+
+.tabItem.active {
+  color: var(--color-primary);
+}
+
+.tabIcon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.tabLabel {
+  font-size: 10px;
+  font-weight: 500;
+}
