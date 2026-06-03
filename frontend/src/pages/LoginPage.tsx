@@ -28,50 +28,75 @@ export default function LoginPage() {
       await client.post('/auth/register', form)
       await login(form.username, form.password)
       navigate('/')
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '登録に失敗しました'
-      setError(msg)
+    } catch {
+      setError('登録に失敗しました。ユーザー名が既に使用されているか、パスワードが要件を満たしていません。')
     }
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '80px auto', padding: 24 }}>
-      <h1 style={{ textAlign: 'center', marginBottom: 24 }}>💰 家計簿</h1>
-      <div style={{ display: 'flex', marginBottom: 16 }}>
-        <button onClick={() => setTab('login')}
-          style={{ flex: 1, padding: 8, background: tab === 'login' ? '#1976d2' : '#eee', color: tab === 'login' ? '#fff' : '#333', border: 'none', cursor: 'pointer' }}>
-          ログイン
-        </button>
-        <button onClick={() => setTab('register')}
-          style={{ flex: 1, padding: 8, background: tab === 'register' ? '#1976d2' : '#eee', color: tab === 'register' ? '#fff' : '#333', border: 'none', cursor: 'pointer' }}>
-          新規登録
-        </button>
-      </div>
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-logo">
+          <div className="login-logo-icon">💰</div>
+          <div className="login-logo-title">Kakeibo</div>
+          <div className="login-logo-sub">家計簿アプリ</div>
+        </div>
 
-      {error && <p style={{ color: 'red', marginBottom: 12 }}>{error}</p>}
+        <div className="tab-switcher">
+          <button className={tab === 'login' ? 'active' : ''} onClick={() => setTab('login')}>
+            ログイン
+          </button>
+          <button className={tab === 'register' ? 'active' : ''} onClick={() => setTab('register')}>
+            新規登録
+          </button>
+        </div>
 
-      <form onSubmit={tab === 'login' ? handleLogin : handleRegister}>
-        {tab === 'register' && (
-          <div style={{ marginBottom: 12 }}>
-            <label>表示名</label>
-            <input style={{ display: 'block', width: '100%', padding: 8, boxSizing: 'border-box' }}
-              value={form.displayName} onChange={e => setForm({ ...form, displayName: e.target.value })} required />
+        {error && <p className="form-error" style={{ marginBottom: 12 }}>⚠ {error}</p>}
+
+        <form onSubmit={tab === 'login' ? handleLogin : handleRegister}>
+          {tab === 'register' && (
+            <div className="form-group">
+              <label className="form-label">表示名</label>
+              <input
+                className="form-input"
+                placeholder="例：山田太郎"
+                value={form.displayName}
+                onChange={e => setForm({ ...form, displayName: e.target.value })}
+                required
+              />
+            </div>
+          )}
+
+          <div className="form-group">
+            <label className="form-label">ユーザー名</label>
+            <input
+              className="form-input"
+              placeholder="ユーザー名"
+              value={form.username}
+              onChange={e => setForm({ ...form, username: e.target.value })}
+              required
+            />
           </div>
-        )}
-        <div style={{ marginBottom: 12 }}>
-          <label>ユーザー名</label>
-          <input style={{ display: 'block', width: '100%', padding: 8, boxSizing: 'border-box' }}
-            value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} required />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <label>パスワード{tab === 'register' && '（6文字以上）'}</label>
-          <input type="password" style={{ display: 'block', width: '100%', padding: 8, boxSizing: 'border-box' }}
-            value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
-        </div>
-        <button type="submit" style={{ width: '100%', padding: 10, background: '#1976d2', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 16 }}>
-          {tab === 'login' ? 'ログイン' : '登録'}
-        </button>
-      </form>
+
+          <div className="form-group">
+            <label className="form-label">
+              パスワード{tab === 'register' && '（8文字以上・英数字混在）'}
+            </label>
+            <input
+              type="password"
+              className="form-input"
+              placeholder="パスワード"
+              value={form.password}
+              onChange={e => setForm({ ...form, password: e.target.value })}
+              required
+            />
+          </div>
+
+          <button type="submit" className="btn-primary" style={{ width: '100%', padding: 12, fontSize: 15 }}>
+            {tab === 'login' ? 'ログイン' : '登録する'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }
