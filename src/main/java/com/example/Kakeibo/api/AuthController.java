@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,9 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     record RegisterRequest(@NotBlank @Size(max = 50) String username,
-                           @NotBlank @Size(min = 6) String password,
+                           @NotBlank @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d).{8,}$",
+                               message = "パスワードは8文字以上で英字と数字を両方含める必要があります")
+                           String password,
                            @NotBlank @Size(max = 50) String displayName) {}
 
     record LoginRequest(@NotBlank String username, @NotBlank String password) {}

@@ -34,13 +34,18 @@ public class TransactionController {
     @GetMapping
     public List<Map<String, Object>> list(@RequestParam(required = false) LocalDate date,
                                           @RequestParam(required = false) String category,
+                                          @RequestParam(required = false) String type,
+                                          @RequestParam(required = false) Long accountId,
+                                          @RequestParam(required = false) String memo,
                                           Authentication auth) {
         User user = userService.findByUsername(auth.getName());
         List<Transaction> transactions;
-        if (category != null) {
-            transactions = transactionService.findByUserAndCategory(user, Category.valueOf(category));
-        } else if (date != null) {
+        if (date != null) {
             transactions = transactionService.findByUserAndDate(user, date);
+        } else if (type != null || accountId != null || category != null || memo != null) {
+            TransactionType typeEnum = type != null ? TransactionType.valueOf(type) : null;
+            Category categoryEnum = category != null ? Category.valueOf(category) : null;
+            transactions = transactionService.findByUserWithFilters(user, typeEnum, accountId, categoryEnum, memo);
         } else {
             transactions = transactionService.findByUser(user);
         }

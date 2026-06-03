@@ -25,4 +25,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Object[]> sumByDayAndTypeForUser(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
 
     List<Transaction> findByUserIdAndCategoryOrderByDateDesc(Long userId, Category category);
+
+    @Query("SELECT t FROM Transaction t WHERE t.user.id = :userId " +
+           "AND (:type IS NULL OR t.type = :type) " +
+           "AND (:accountId IS NULL OR t.account.id = :accountId) " +
+           "AND (:category IS NULL OR t.category = :category) " +
+           "AND (:memo IS NULL OR t.memo LIKE %:memo%) " +
+           "ORDER BY t.date DESC")
+    List<Transaction> findByUserIdWithFilters(
+            @Param("userId") Long userId,
+            @Param("type") TransactionType type,
+            @Param("accountId") Long accountId,
+            @Param("category") Category category,
+            @Param("memo") String memo);
 }

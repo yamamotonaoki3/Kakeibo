@@ -42,12 +42,16 @@
 ```
 1. GitHub で Issue を作成（テンプレートを使う）
 2. ブランチを切る: git checkout -b feature/#<番号>-<概要>
-3. 実装・コミット
-4. git push origin <ブランチ名>
-5. GitHub で PR を作成（テンプレートを使う・Closes #<番号> を記載）
-6. セルフレビュー → マージ
-7. ブランチ削除
+3. ファイル作成・実装
+4. 動作確認（アプリを起動して実際の動作をブラウザで検証）
+5. コミット: git commit
+6. プッシュ: git push origin <ブランチ名>
+7. GitHub で PR を作成（テンプレートを使う・Closes #<番号> を記載）
+8. セルフレビュー → マージ
+9. ブランチ削除
 ```
+
+> **ポイント:** ステップ 3→4→5→6 の順序は厳守。動作確認なしでコミット・プッシュしない。
 
 ---
 
@@ -67,8 +71,9 @@ docs: 要件定義書を追加
 
 ## 技術スタック（参考）
 
-- **Backend:** Java 25 / Spring Boot 4.0.5 / Maven / H2 Database
-- **Frontend:** Thymeleaf（サーバーサイドレンダリング）
+- **Backend:** Java 25 / Spring Boot 4.0.5 / Gradle 9.5.0 (Kotlin DSL) / PostgreSQL 17
+- **Frontend:** React 19 / TypeScript / Vite
 - **パッケージ:** `com.example.Kakeibo`
-- **アプリ起動:** `.\mvnw.cmd spring-boot:run`
-- **H2 コンソール:** http://localhost:8080/h2-console
+- **DB起動:** `docker compose up -d`
+- **バックエンド起動:** `./gradlew bootRun`
+- **フロントエンド起動:** `cd frontend && npm run dev`

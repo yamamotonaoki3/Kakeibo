@@ -30,4 +30,7 @@ public class Account {
     @NotNull
     @Column(nullable = false)
     private Long initialBalance = 0L;
+
+    @Column(nullable = false)
+    private boolean archived = false;
 }
