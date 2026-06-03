@@ -52,6 +52,12 @@ public class TransactionController {
         return transactions.stream().map(this::toMap).toList();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id, Authentication auth) {
+        User user = userService.findByUsername(auth.getName());
+        return ResponseEntity.ok(toMap(transactionService.findById(id, user)));
+    }
+
     @GetMapping("/month")
     public List<Map<String, Object>> listByMonth(@RequestParam int year,
                                                   @RequestParam int month,
