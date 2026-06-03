@@ -17,6 +17,10 @@ public class AccountService {
     private final TransactionRepository transactionRepository;
 
     public List<Account> findByUser(User user) {
+        return accountRepository.findByUserIdAndArchivedFalse(user.getId());
+    }
+
+    public List<Account> findAllByUser(User user) {
         return accountRepository.findByUserId(user.getId());
     }
 
@@ -46,7 +50,8 @@ public class AccountService {
     @Transactional
     public void delete(Long id, User user) {
         Account account = findById(id, user);
-        accountRepository.delete(account);
+        account.setArchived(true);
+        accountRepository.save(account);
     }
 
     public long calcBalance(Account account) {
