@@ -21,26 +21,13 @@ function getSeasonalEvents(year: number, month: number): Record<number, string> 
   return events
 }
 
-type SeasonalSpend = { label: string; date: string; amount: number | null }
+type SeasonalSpend = { label: string; amount: number | null }
 
-function getSeasonalDates(year: number): { otoshidama: string; mothersDay: string; fathersDay: string } {
-  const may1 = new Date(year, 4, 1).getDay()
-  const mothersDayNum = 1 + (7 - may1) % 7 + 7
-  const jun1 = new Date(year, 5, 1).getDay()
-  const fathersDayNum = 1 + (7 - jun1) % 7 + 14
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return {
-    otoshidama: `${year}-01-01`,
-    mothersDay: `${year}-05-${pad(mothersDayNum)}`,
-    fathersDay: `${year}-06-${pad(fathersDayNum)}`,
-  }
-}
-
-function calcSeasonalSpend(txns: Transaction[], date: string): number | null {
-  const matched = txns.filter(t => t.date === date && t.type === 'EXPENSE')
-  if (matched.length === 0) return null
-  return matched.reduce((s, t) => s + t.amount, 0)
-}
+const SEASONAL_CATEGORIES = [
+  { label: '🎍お年玉', category: 'GIFT' },
+  { label: '🌸母の日', category: 'MOTHERS_DAY' },
+  { label: '👔父の日', category: 'FATHERS_DAY' },
+] as const
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const result: T[][] = []
@@ -65,17 +52,16 @@ export default function TopPage() {
   }, [year, month])
 
   useEffect(() => {
-    const dates = getSeasonalDates(year)
-    client.get<Transaction[]>(`/transactions?year=${year}`).then(r => {
-      const txns = r.data
-      setSeasonalSpends([
-        { label: '🎍お年玉', date: dates.otoshidama, amount: calcSeasonalSpend(txns, dates.otoshidama) },
-        { label: '🌸母の日', date: dates.mothersDay, amount: calcSeasonalSpend(txns, dates.mothersDay) },
-        { label: '👔父の日', date: dates.fathersDay, amount: calcSeasonalSpend(txns, dates.fathersDay) },
-      ])
-    }).catch(() => {
-      setSeasonalSpends([])
-    })
+    Promise.all(
+      SEASONAL_CATEGORIES.map(({ label, category }) =>
+        client.get<Transaction[]>(`/transactions?category=${category}`)
+          .then(r => {
+            const yearTxns = r.data.filter(t => t.date.startsWith(String(year)))
+            const total = yearTxns.reduce((s, t) => s + t.amount, 0)
+            return { label, amount: yearTxns.length > 0 ? total : null }
+          })
+      )
+    ).then(setSeasonalSpends).catch(() => setSeasonalSpends([]))
   }, [year])
 
   const prev = () => { if (month === 1) { setYear(y => y - 1); setMonth(12) } else setMonth(m => m - 1) }
