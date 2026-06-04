@@ -16,17 +16,19 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
 
+    @Transactional(readOnly = true)
     public List<Account> findByUser(User user) {
         return accountRepository.findByUserIdAndArchivedFalse(user.getId());
     }
 
+    @Transactional(readOnly = true)
     public List<Account> findAllByUser(User user) {
         return accountRepository.findByUserId(user.getId());
     }
 
+    @Transactional(readOnly = true)
     public Account findById(Long id, User user) {
-        return accountRepository.findById(id)
-                .filter(a -> a.getUser().getId().equals(user.getId()))
+        return accountRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("口座が見つかりません"));
     }
 

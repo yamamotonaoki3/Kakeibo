@@ -43,8 +43,8 @@ public class TransactionController {
         if (date != null) {
             transactions = transactionService.findByUserAndDate(user, date);
         } else if (type != null || accountId != null || category != null || memo != null) {
-            TransactionType typeEnum = type != null ? TransactionType.valueOf(type) : null;
-            Category categoryEnum = category != null ? Category.valueOf(category) : null;
+            TransactionType typeEnum = type != null ? parseType(type) : null;
+            Category categoryEnum = category != null ? parseCategory(category) : null;
             transactions = transactionService.findByUserWithFilters(user, typeEnum, accountId, categoryEnum, memo);
         } else {
             transactions = transactionService.findByUser(user);
@@ -103,5 +103,21 @@ public class TransactionController {
                 "type", t.getType().name(),
                 "memo", t.getMemo() != null ? t.getMemo() : ""
         );
+    }
+
+    private TransactionType parseType(String type) {
+        try {
+            return TransactionType.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("不正な取引種別です: " + type);
+        }
+    }
+
+    private Category parseCategory(String category) {
+        try {
+            return Category.valueOf(category);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("不正なカテゴリです: " + category);
+        }
     }
 }
