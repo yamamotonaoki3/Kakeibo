@@ -1,6 +1,7 @@
 package com.example.Kakeibo.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,14 +11,23 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    // dev プロファイル以外では null（@Autowired + Optional で安全に注入）
+    @Autowired(required = false)
+    private DevAutoLoginFilter devAutoLoginFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        if (devAutoLoginFilter != null) {
+            http.addFilterBefore(devAutoLoginFilter, UsernamePasswordAuthenticationFilter.class);
+        }
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth

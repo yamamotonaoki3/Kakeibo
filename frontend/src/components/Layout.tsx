@@ -3,17 +3,19 @@ import { useAuth } from '../context/useAuth'
 import styles from './Layout.module.css'
 
 const TABS = [
-  { path: '/',                 icon: '📅', label: 'カレンダー' },
-  { path: '/transactions',     icon: '📋', label: '一覧' },
-  { path: '/transactions/new', icon: '➕', label: '入力' },
-  { path: '/summary',          icon: '📊', label: 'サマリー' },
-  { path: '/accounts',         icon: '⚙️', label: '設定' },
+  { path: '/',             icon: '📅', label: 'カレンダー' },
+  { path: '/transactions', icon: '📋', label: '一覧' },
+  { path: '/splits',       icon: '🤝', label: '割り勘' },
+  { path: '/summary',      icon: '📊', label: 'サマリー' },
+  { path: '/accounts',     icon: '⚙️', label: '設定' },
 ]
 
 function isTabActive(tabPath: string, pathname: string): boolean {
-  if (tabPath === '/transactions/new') return pathname === '/transactions/new'
   if (tabPath === '/transactions') {
-    return pathname.startsWith('/transactions') && pathname !== '/transactions/new'
+    return pathname.startsWith('/transactions')
+  }
+  if (tabPath === '/splits') {
+    return pathname.startsWith('/splits') || pathname.startsWith('/transfers') || pathname === '/groups'
   }
   if (tabPath === '/accounts') {
     return pathname === '/accounts' || pathname === '/categories'

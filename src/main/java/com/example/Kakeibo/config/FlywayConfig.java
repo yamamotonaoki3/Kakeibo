@@ -23,6 +23,7 @@ public class FlywayConfig {
                 .locations("classpath:db/migration")
                 .baselineOnMigrate(baselineOnMigrate)
                 .baselineVersion(baselineVersion)
+                .validateOnMigrate(false)
                 .load();
     }
 }

@@ -8,6 +8,10 @@ import TransactionFormPage from './pages/TransactionFormPage'
 import AccountsPage from './pages/AccountsPage'
 import CategoriesPage from './pages/CategoriesPage'
 import SummaryPage from './pages/SummaryPage'
+import GroupPage from './pages/GroupPage'
+import SplitFormPage from './pages/SplitFormPage'
+import TransferFormPage from './pages/TransferFormPage'
+import SettlementPage from './pages/SettlementPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -26,6 +30,10 @@ function AppRoutes() {
       <Route path="/accounts" element={<PrivateRoute><AccountsPage /></PrivateRoute>} />
       <Route path="/categories" element={<PrivateRoute><CategoriesPage /></PrivateRoute>} />
       <Route path="/summary" element={<PrivateRoute><SummaryPage /></PrivateRoute>} />
+      <Route path="/groups" element={<PrivateRoute><GroupPage /></PrivateRoute>} />
+      <Route path="/splits" element={<PrivateRoute><SettlementPage /></PrivateRoute>} />
+      <Route path="/splits/new" element={<PrivateRoute><SplitFormPage /></PrivateRoute>} />
+      <Route path="/transfers/new" element={<PrivateRoute><TransferFormPage /></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

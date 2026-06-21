@@ -1,5 +1,7 @@
 package com.example.Kakeibo.api;
 
+import com.example.Kakeibo.domain.split.SplitRepository;
+import com.example.Kakeibo.domain.split.SplitShare;
 import com.example.Kakeibo.domain.transaction.TransactionRepository;
 import com.example.Kakeibo.domain.transaction.TransactionType;
 import com.example.Kakeibo.domain.user.User;
@@ -18,6 +20,7 @@ import java.util.*;
 public class CalendarController {
 
     private final TransactionRepository transactionRepository;
+    private final SplitRepository splitRepository;
     private final UserService userService;
 
     @GetMapping
@@ -47,6 +50,14 @@ public class CalendarController {
             } else {
                 dailyExpense.put(date, amount);
             }
+        }
+
+        // 割り勘の自分の負担額を日別・月別合計に加算
+        List<SplitShare> splitShares = splitRepository.findSharesByUserId(user.getId(), start, end);
+        for (SplitShare share : splitShares) {
+            LocalDate d = share.getSplitTransaction().getSplitDate();
+            dailyExpense.merge(d, share.getShareAmount(), Long::sum);
+            monthExpense += share.getShareAmount();
         }
 
         List<Map<String, Object>> days = new ArrayList<>();

@@ -11,18 +11,18 @@ export default function PieChart({ slices, size = 180 }: Props) {
   const cy = r
   const radius = r - 10
 
-  let cumAngle = -Math.PI / 2
-  const paths = slices.map(sl => {
+  const paths = slices.reduce((acc, sl) => {
     const angle = (sl.value / total) * 2 * Math.PI
+    const cumAngle = acc.length === 0 ? -Math.PI / 2 : acc[acc.length - 1].nextAngle
     const x1 = cx + radius * Math.cos(cumAngle)
     const y1 = cy + radius * Math.sin(cumAngle)
-    cumAngle += angle
-    const x2 = cx + radius * Math.cos(cumAngle)
-    const y2 = cy + radius * Math.sin(cumAngle)
+    const nextAngle = cumAngle + angle
+    const x2 = cx + radius * Math.cos(nextAngle)
+    const y2 = cy + radius * Math.sin(nextAngle)
     const largeArc = angle > Math.PI ? 1 : 0
     const d = `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`
-    return { d, color: sl.color }
-  })
+    return [...acc, { d, color: sl.color, nextAngle }]
+  }, [] as Array<{ d: string; color: string; nextAngle: number }>)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
