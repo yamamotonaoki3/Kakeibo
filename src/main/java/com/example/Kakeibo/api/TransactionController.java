@@ -1,7 +1,7 @@
 package com.example.Kakeibo.api;
 
-import com.example.Kakeibo.domain.split.SplitRepository;
 import com.example.Kakeibo.domain.split.SplitShare;
+import com.example.Kakeibo.domain.split.SplitShareRepository;
 import com.example.Kakeibo.domain.transaction.*;
 import com.example.Kakeibo.domain.user.User;
 import com.example.Kakeibo.domain.user.UserService;
@@ -26,7 +26,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
     private final UserService userService;
-    private final SplitRepository splitRepository;
+    private final SplitShareRepository splitShareRepository;
 
     record TransactionRequest(
             @NotNull LocalDate date,
@@ -60,7 +60,7 @@ public class TransactionController {
 
         // カテゴリ・口座フィルターがない場合のみ割り勘を混ぜる
         if (category == null && accountId == null && type == null) {
-            List<SplitShare> shares = splitRepository.findSharesByUserId(user.getId(), date, date);
+            List<SplitShare> shares = splitShareRepository.findByUserId(user.getId(), date, date);
             for (SplitShare s : shares) {
                 Map<String, Object> m = new HashMap<>();
                 m.put("id", "split-" + s.getId());
