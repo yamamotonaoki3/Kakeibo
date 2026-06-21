@@ -96,6 +96,16 @@ export default function SettlementPage() {
   addToSummary(transferSummary)
   summaryMap.forEach(v => allSummary.push(v))
 
+  // 自分が支払うべき（自分 → 他）と自分が回収すべき（他 → 自分）に分類
+  const iOwe = allSummary.filter(d => d.fromUserId === user?.id)
+  const theyOwe = allSummary.filter(d => d.toUserId === user?.id)
+
+  // 自分の未精算負担合計（splitデータから計算）
+  const myUnsettledTotal = splits
+    .flatMap(tx => tx.shares)
+    .filter(s => s.userId === user?.id && !s.isSettled)
+    .reduce((sum, s) => sum + s.shareAmount, 0)
+
   return (
     <Layout>
       <h2 style={{ marginBottom: 12, fontSize: 18 }}>割り勘・送金</h2>
@@ -171,23 +181,60 @@ export default function SettlementPage() {
             👥 グループ管理
           </button>
 
-          {allSummary.length === 0 ? (
+          {/* 自分の未精算負担合計 */}
+          {myUnsettledTotal > 0 && (
+            <div className="card" style={{ marginBottom: 12, background: 'var(--color-primary-light)', borderLeft: '4px solid var(--color-primary)' }}>
+              <div style={{ fontSize: 12, color: 'var(--color-text-sub)', marginBottom: 4 }}>自分の未精算負担合計</div>
+              <div style={{ fontWeight: 700, fontSize: 22, color: 'var(--color-expense)' }}>
+                ¥{myUnsettledTotal.toLocaleString()}
+              </div>
+            </div>
+          )}
+
+          {/* 自分が回収すべき金額 */}
+          {theyOwe.length > 0 && (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-income)', marginBottom: 6 }}>
+                ↙ 自分が回収すべき金額
+              </div>
+              {theyOwe.map((d, i) => (
+                <div key={i} className="card" style={{ marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontWeight: 600 }}>{d.fromDisplayName}</span>
+                    <span style={{ fontSize: 14, color: 'var(--color-text-sub)' }}>から受け取る</span>
+                    <span style={{ marginLeft: 'auto', fontWeight: 700, fontSize: 16, color: 'var(--color-income)' }}>
+                      ¥{d.amount.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 自分が支払うべき金額 */}
+          {iOwe.length > 0 && (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-expense)', marginBottom: 6 }}>
+                ↗ 自分が支払うべき金額
+              </div>
+              {iOwe.map((d, i) => (
+                <div key={i} className="card" style={{ marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontWeight: 600 }}>{d.toDisplayName}</span>
+                    <span style={{ fontSize: 14, color: 'var(--color-text-sub)' }}>に支払う</span>
+                    <span style={{ marginLeft: 'auto', fontWeight: 700, fontSize: 16, color: 'var(--color-expense)' }}>
+                      ¥{d.amount.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {myUnsettledTotal === 0 && theyOwe.length === 0 && iOwe.length === 0 && (
             <div className="card" style={{ textAlign: 'center', color: 'var(--color-text-sub)' }}>
               <p>未精算の金額はありません</p>
             </div>
-          ) : (
-            allSummary.map((d, i) => (
-              <div key={i} className="card" style={{ marginBottom: 10 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontWeight: 600, color: 'var(--color-expense)' }}>{d.fromDisplayName}</span>
-                  <span style={{ fontSize: 18 }}>→</span>
-                  <span style={{ fontWeight: 600 }}>{d.toDisplayName}</span>
-                  <span style={{ marginLeft: 'auto', fontWeight: 700, fontSize: 16, color: 'var(--color-expense)' }}>
-                    ¥{d.amount.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            ))
           )}
         </>
       )}

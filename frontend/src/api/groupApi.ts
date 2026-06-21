@@ -40,6 +40,6 @@ export const settleTransfer = (id: number) => client.patch(`/transfers/${id}/set
 export const getTransferSummary = (from?: string, to?: string) =>
   client.get<DebtSummary[]>('/transfers/summary', { params: { from, to } })
 
-// User search
-export const searchUser = (username: string) =>
-  client.get<UserSearchResult>('/users/search', { params: { username } })
+// User search (display name partial match)
+export const searchUser = (query: string) =>
+  client.get<UserSearchResult[]>('/users/search', { params: { query } })
