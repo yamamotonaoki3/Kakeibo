@@ -21,4 +21,16 @@ public interface SplitShareRepository extends JpaRepository<SplitShare, Long> {
             @Param("userId") Long userId,
             @Param("from") LocalDate from,
             @Param("to") LocalDate to);
+
+    @Query("SELECT ss FROM SplitShare ss " +
+           "JOIN FETCH ss.splitTransaction st " +
+           "JOIN FETCH st.group " +
+           "JOIN FETCH st.paidBy " +
+           "WHERE ss.user.id = :userId " +
+           "AND st.splitDate BETWEEN :from AND :to " +
+           "ORDER BY st.splitDate DESC")
+    List<SplitShare> findByUserIdAndDateBetween(
+            @Param("userId") Long userId,
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to);
 }

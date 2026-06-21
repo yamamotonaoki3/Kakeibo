@@ -53,7 +53,7 @@ public class CalendarController {
         }
 
         // 割り勘の自分の負担額を日別・月別合計に加算
-        List<SplitShare> splitShares = splitShareRepository.findByUserId(user.getId(), start, end);
+        List<SplitShare> splitShares = splitShareRepository.findByUserIdAndDateBetween(user.getId(), start, end);
         for (SplitShare share : splitShares) {
             LocalDate d = share.getSplitTransaction().getSplitDate();
             dailyExpense.merge(d, share.getShareAmount(), Long::sum);
