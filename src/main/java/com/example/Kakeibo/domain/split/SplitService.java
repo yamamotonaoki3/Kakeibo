@@ -87,6 +87,7 @@ public class SplitService {
             share.setUser(memberUser);
             share.setShareRatio(req.shareRatio());
             share.setShareAmount(shareAmount);
+            share.setIsSettled(memberUser.getId().equals(paidBy.getId()));
             shares.add(share);
         }
 
