@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [form, setForm] = useState({ username: '', password: '', displayName: '' })
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -82,14 +83,28 @@ export default function LoginPage() {
             <label className="form-label">
               パスワード{tab === 'register' && '（8文字以上・英数字混在）'}
             </label>
-            <input
-              type="password"
-              className="form-input"
-              placeholder="パスワード"
-              value={form.password}
-              onChange={e => setForm({ ...form, password: e.target.value })}
-              required
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="form-input"
+                placeholder="パスワード"
+                value={form.password}
+                onChange={e => setForm({ ...form, password: e.target.value })}
+                required
+                style={{ paddingRight: 44 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                style={{
+                  position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: 'var(--color-text-sub)', fontSize: 18, padding: 0, lineHeight: 1,
+                }}
+              >
+                {showPassword ? '🙈' : '👁'}
+              </button>
+            </div>
           </div>
 
           <button type="submit" className="btn-primary" style={{ width: '100%', padding: 12, fontSize: 15 }}>
