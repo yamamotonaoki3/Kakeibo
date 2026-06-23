@@ -1,5 +1,7 @@
 package com.example.Kakeibo.api;
 
+import com.example.Kakeibo.domain.split.SplitShare;
+import com.example.Kakeibo.domain.split.SplitShareRepository;
 import com.example.Kakeibo.domain.transaction.*;
 import com.example.Kakeibo.domain.user.User;
 import com.example.Kakeibo.domain.user.UserService;
@@ -12,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +26,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
     private final UserService userService;
+    private final SplitShareRepository splitShareRepository;
 
     record TransactionRequest(
             @NotNull LocalDate date,
@@ -39,17 +44,42 @@ public class TransactionController {
                                           @RequestParam(required = false) String memo,
                                           Authentication auth) {
         User user = userService.findByUsername(auth.getName());
+        boolean hasFilter = type != null || accountId != null || category != null || memo != null;
         List<Transaction> transactions;
         if (date != null) {
             transactions = transactionService.findByUserAndDate(user, date);
-        } else if (type != null || accountId != null || category != null || memo != null) {
+        } else if (hasFilter) {
             TransactionType typeEnum = type != null ? parseType(type) : null;
             Category categoryEnum = category != null ? parseCategory(category) : null;
             transactions = transactionService.findByUserWithFilters(user, typeEnum, accountId, categoryEnum, memo);
         } else {
             transactions = transactionService.findByUser(user);
         }
-        return transactions.stream().map(this::toMap).toList();
+
+        List<Map<String, Object>> result = new ArrayList<>(transactions.stream().map(this::toMap).toList());
+
+        // カテゴリ・口座フィルターがない場合のみ割り勘を混ぜる
+        if (category == null && accountId == null && type == null) {
+            List<SplitShare> shares = splitShareRepository.findByUserId(user.getId(), date, date);
+            for (SplitShare s : shares) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", "split-" + s.getId());
+                m.put("date", s.getSplitTransaction().getSplitDate().toString());
+                m.put("accountId", null);
+                m.put("accountName", "");
+                m.put("amount", s.getShareAmount());
+                m.put("category", "OTHER_EXPENSE");
+                m.put("type", "EXPENSE");
+                m.put("memo", s.getSplitTransaction().getMemo() != null ? s.getSplitTransaction().getMemo() : "");
+                m.put("isSplit", true);
+                m.put("groupName", s.getSplitTransaction().getGroup().getName());
+                m.put("paidByDisplayName", s.getSplitTransaction().getPaidBy().getDisplayName());
+                result.add(m);
+            }
+            result.sort((a, b) -> String.valueOf(b.get("date")).compareTo(String.valueOf(a.get("date"))));
+        }
+
+        return result;
     }
 
     @GetMapping("/{id}")

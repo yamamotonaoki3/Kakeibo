@@ -21,15 +21,78 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 }
 
 export type Transaction = {
-  id: number
+  id: number | string
   date: string
-  accountId: number
+  accountId: number | null
   accountName: string
   amount: number
   category: Category
   type: TransactionType
   memo: string
+  isSplit?: boolean
+  groupName?: string
+  paidByDisplayName?: string
 }
+
+export type Group = {
+  id: number
+  name: string
+  inviteCode: string
+  createdByDisplayName: string
+  createdAt: string
+}
+
+export type GroupMember = {
+  userId: number
+  displayName: string
+  joinedAt: string
+}
+
+export type SplitShare = {
+  id: number
+  userId: number
+  displayName: string
+  shareRatio: number
+  shareAmount: number
+  isSettled: boolean
+  settledAt: string | null
+}
+
+export type SplitTransaction = {
+  id: number
+  groupId: number
+  groupName: string
+  totalAmount: number
+  paidByUserId: number
+  paidByDisplayName: string
+  memo: string
+  splitDate: string
+  createdAt: string
+  shares: SplitShare[]
+}
+
+export type Transfer = {
+  id: number
+  fromUserId: number
+  fromDisplayName: string
+  toUserId: number
+  toDisplayName: string
+  amount: number
+  memo: string
+  transferDate: string
+  isSettled: boolean
+  settledAt: string | null
+}
+
+export type DebtSummary = {
+  fromUserId: number
+  fromDisplayName: string
+  toUserId: number
+  toDisplayName: string
+  amount: number
+}
+
+export type UserSearchResult = { id: number; displayName: string }
 
 export type CalendarDay = {
   day: number

@@ -101,7 +101,8 @@ export default function AccountsPage() {
                   <div style={{ fontWeight: 600, marginBottom: 2 }}>{a.name}</div>
                   <div style={{ fontSize: 12, color: 'var(--color-text-sub)' }}>
                     初期残高 ¥{a.initialBalance.toLocaleString()}
-                    　現在 <span style={{ fontWeight: 600, color: a.balance >= 0 ? 'var(--color-positive)' : 'var(--color-expense)' }}>
+                    <span style={{ margin: '0 2px' }}>現在</span>
+                    <span style={{ fontWeight: 600, color: a.balance >= 0 ? 'var(--color-positive)' : 'var(--color-expense)' }}>
                       ¥{a.balance.toLocaleString()}
                     </span>
                   </div>

@@ -102,8 +102,17 @@ export default function TransactionsPage() {
                   <span style={{ fontSize: 12, color: 'var(--color-text-sub)' }}>{t.date}</span>
                   <span style={{ fontSize: 12, color: 'var(--color-text-sub)', margin: '0 6px' }}>·</span>
                   <span style={{ fontSize: 13, fontWeight: 500 }}>{CATEGORY_LABELS[t.category]}</span>
+                  {t.isSplit && (
+                    <span style={{
+                      fontSize: 10, padding: '2px 6px',
+                      background: '#e3f2fd', color: '#1565c0',
+                      borderRadius: 4, marginLeft: 6, fontWeight: 600,
+                    }}>割り勘</span>
+                  )}
                   <span style={{ fontSize: 12, color: 'var(--color-text-sub)', margin: '0 6px' }}>·</span>
-                  <span style={{ fontSize: 12, color: 'var(--color-text-sub)' }}>{t.accountName}</span>
+                  <span style={{ fontSize: 12, color: 'var(--color-text-sub)' }}>
+                    {t.isSplit ? t.groupName : t.accountName}
+                  </span>
                 </div>
                 <span style={{
                   fontWeight: 700, fontSize: 15,
@@ -113,21 +122,23 @@ export default function TransactionsPage() {
                 </span>
               </div>
               {t.memo && <p style={{ fontSize: 12, color: 'var(--color-text-sub)', marginTop: 4 }}>{t.memo}</p>}
-              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', marginTop: 6 }}>
-                <button
-                  className="btn-outline btn-sm"
-                  onClick={() => navigate(`/transactions/${t.id}/edit`)}
-                >
-                  編集
-                </button>
-                <button
-                  className="btn-sm"
-                  style={{ background: '#ffebee', color: 'var(--color-expense)', border: 'none', borderRadius: 'var(--radius-sm)', padding: '5px 12px', fontSize: 12 }}
-                  onClick={() => setDeleteTarget(t)}
-                >
-                  削除
-                </button>
-              </div>
+              {!t.isSplit && (
+                <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', marginTop: 6 }}>
+                  <button
+                    className="btn-outline btn-sm"
+                    onClick={() => navigate(`/transactions/${t.id}/edit`)}
+                  >
+                    編集
+                  </button>
+                  <button
+                    className="btn-sm"
+                    style={{ background: '#ffebee', color: 'var(--color-expense)', border: 'none', borderRadius: 'var(--radius-sm)', padding: '5px 12px', fontSize: 12 }}
+                    onClick={() => setDeleteTarget(t)}
+                  >
+                    削除
+                  </button>
+                </div>
+              )}
             </div>
           ))
         )}
@@ -138,7 +149,7 @@ export default function TransactionsPage() {
           <div className="dialog-box" onClick={e => e.stopPropagation()}>
             <div className="dialog-title">この取引を削除しますか？</div>
             <div className="dialog-body">
-              {deleteTarget.date}　{CATEGORY_LABELS[deleteTarget.category]}<br />
+              {deleteTarget.date} {CATEGORY_LABELS[deleteTarget.category]}<br />
               <strong style={{ color: deleteTarget.type === 'INCOME' ? 'var(--color-income)' : 'var(--color-expense)' }}>
                 {deleteTarget.type === 'INCOME' ? '+' : '-'}¥{deleteTarget.amount.toLocaleString()}
               </strong>

@@ -115,44 +115,52 @@ export default function TopPage() {
         </div>
       )}
 
-      <table className={styles.calendar}>
-        <thead>
-          <tr>
-            {DAYS.map((d, i) => (
-              <th key={d} className={`${styles.dayHeader} ${i === 5 ? styles.sat : ''} ${i === 6 ? styles.sun : ''}`}>
-                {d}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {calendar && chunk(calendar.days, 7).map((week, wi) => (
-            <tr key={wi}>
-              {week.map((day, di) => {
-                const isSat = di === 5
-                const isSun = di === 6
-                const badge = day ? seasonalEvents[day.day] : undefined
-                return (
-                  <td
-                    key={di}
-                    onClick={() => day && handleDayClick(day.date, day.day)}
-                    className={`${styles.cell} ${day ? styles.cellActive : styles.cellEmpty} ${isSat ? styles.sat : ''} ${isSun ? styles.sun : ''}`}
-                  >
-                    {day && (
-                      <>
-                        <div className={styles.dayNum}>{day.day}</div>
-                        {badge && <div className={styles.badge}>{badge}</div>}
-                        {day.income > 0 && <div className={`${styles.amt} ${styles.amtIncome}`}>+{day.income.toLocaleString()}</div>}
-                        {day.expense > 0 && <div className={`${styles.amt} ${styles.amtExpense}`}>-{day.expense.toLocaleString()}</div>}
-                      </>
-                    )}
-                  </td>
-                )
-              })}
+      <div className={styles.calendarWrapper}>
+        <table className={styles.calendar}>
+          <thead>
+            <tr>
+              {DAYS.map((d, i) => (
+                <th key={d} className={`${styles.dayHeader} ${i === 5 ? styles.sat : ''} ${i === 6 ? styles.sun : ''}`}>
+                  {d}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {calendar && chunk(calendar.days, 7).map((week, wi) => (
+              <tr key={wi}>
+                {week.map((day, di) => {
+                  const isSat = di === 5
+                  const isSun = di === 6
+                  const badge = day ? seasonalEvents[day.day] : undefined
+                  const balance = day ? day.income - day.expense : 0
+                  return (
+                    <td
+                      key={di}
+                      onClick={() => day && handleDayClick(day.date, day.day)}
+                      className={`${styles.cell} ${day ? styles.cellActive : styles.cellEmpty} ${isSat ? styles.sat : ''} ${isSun ? styles.sun : ''}`}
+                    >
+                      {day && (
+                        <>
+                          <div className={styles.dayNum}>{day.day}</div>
+                          {badge && <div className={styles.badge}>{badge}</div>}
+                          {day.income > 0 && <div className={`${styles.amt} ${styles.amtIncome}`}>+{day.income.toLocaleString()}</div>}
+                          {day.expense > 0 && <div className={`${styles.amt} ${styles.amtExpense}`}>-{day.expense.toLocaleString()}</div>}
+                          {(day.income > 0 || day.expense > 0) && (
+                            <div className={`${styles.amt} ${styles.amtBalance}`}>
+                              {balance >= 0 ? '+' : ''}{balance.toLocaleString()}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </td>
+                  )
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Layout>
   )
 }
