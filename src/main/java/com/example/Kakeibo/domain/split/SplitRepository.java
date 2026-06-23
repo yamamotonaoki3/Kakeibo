@@ -14,8 +14,7 @@ public interface SplitRepository extends JpaRepository<SplitTransaction, Long> {
            "JOIN FETCH st.paidBy " +
            "JOIN FETCH st.group " +
            "WHERE st.group.id IN :groupIds " +
-           "AND (:from IS NULL OR st.splitDate >= :from) " +
-           "AND (:to IS NULL OR st.splitDate <= :to) " +
+           "AND st.splitDate BETWEEN :from AND :to " +
            "ORDER BY st.splitDate DESC, st.createdAt DESC")
     List<SplitTransaction> findByGroupIdsAndDateRange(
             @Param("groupIds") List<Long> groupIds,
@@ -39,8 +38,7 @@ public interface SplitRepository extends JpaRepository<SplitTransaction, Long> {
            "JOIN FETCH st.paidBy " +
            "WHERE st.group.id IN :groupIds " +
            "AND ss.isSettled = false " +
-           "AND (:from IS NULL OR st.splitDate >= :from) " +
-           "AND (:to IS NULL OR st.splitDate <= :to)")
+           "AND st.splitDate BETWEEN :from AND :to")
     List<SplitShare> findUnsettledSharesByGroupIds(
             @Param("groupIds") List<Long> groupIds,
             @Param("from") LocalDate from,

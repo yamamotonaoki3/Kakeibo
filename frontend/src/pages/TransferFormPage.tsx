@@ -6,7 +6,8 @@ import type { UserSearchResult } from '../types'
 
 export default function TransferFormPage() {
   const navigate = useNavigate()
-  const [searchUsername, setSearchUsername] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [candidates, setCandidates] = useState<UserSearchResult[]>([])
   const [foundUser, setFoundUser] = useState<UserSearchResult | null>(null)
   const [searchError, setSearchError] = useState('')
   const [amount, setAmount] = useState('')
@@ -18,11 +19,12 @@ export default function TransferFormPage() {
     e.preventDefault()
     setSearchError('')
     setFoundUser(null)
-    try {
-      const r = await searchUser(searchUsername)
-      setFoundUser(r.data)
-    } catch {
+    setCandidates([])
+    const r = await searchUser(searchQuery)
+    if (r.data.length === 0) {
       setSearchError('ユーザーが見つかりません')
+    } else {
+      setCandidates(r.data)
     }
   }
 
@@ -53,13 +55,13 @@ export default function TransferFormPage() {
         <p className="section-title">送金先の検索</p>
         <form onSubmit={handleSearch}>
           <div className="form-group">
-            <label className="form-label">ユーザー名 *</label>
+            <label className="form-label">表示名で検索 *</label>
             <div style={{ display: 'flex', gap: 8 }}>
               <input
                 className="form-input"
-                placeholder="相手のユーザー名を入力"
-                value={searchUsername}
-                onChange={e => setSearchUsername(e.target.value)}
+                placeholder="相手の表示名を入力"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
                 required
                 style={{ flex: 1 }}
               />
@@ -71,6 +73,33 @@ export default function TransferFormPage() {
         </form>
 
         {searchError && <p style={{ color: 'var(--color-expense)', fontSize: 13, marginTop: 4 }}>{searchError}</p>}
+
+        {candidates.length > 0 && !foundUser && (
+          <div style={{ marginTop: 8 }}>
+            {candidates.map(u => (
+              <div
+                key={u.id}
+                onClick={() => { setFoundUser(u); setCandidates([]) }}
+                style={{
+                  padding: '10px 12px', marginBottom: 6,
+                  background: 'var(--color-surface)', border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 10
+                }}
+              >
+                <span style={{
+                  width: 32, height: 32, borderRadius: '50%',
+                  background: 'var(--color-primary)', color: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 14, fontWeight: 600, flexShrink: 0
+                }}>
+                  {u.displayName.charAt(0)}
+                </span>
+                <span style={{ fontWeight: 600 }}>{u.displayName}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {foundUser && (
           <div style={{
@@ -86,10 +115,16 @@ export default function TransferFormPage() {
             }}>
               {foundUser.displayName.charAt(0)}
             </span>
-            <div>
+            <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 600 }}>{foundUser.displayName}</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-sub)' }}>@{searchUsername}</div>
             </div>
+            <button
+              type="button"
+              className="btn-outline btn-sm"
+              onClick={() => setFoundUser(null)}
+            >
+              変更
+            </button>
           </div>
         )}
       </div>
