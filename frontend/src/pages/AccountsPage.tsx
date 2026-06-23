@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
+import ConfirmDialog from '../components/ConfirmDialog'
 import client from '../api/client'
 import type { Account } from '../types'
 
@@ -130,22 +131,21 @@ export default function AccountsPage() {
         </button>
       </div>
 
-      {deleteTarget && (
-        <div className="dialog-overlay" onClick={() => setDeleteTarget(null)}>
-          <div className="dialog-box" onClick={e => e.stopPropagation()}>
-            <div className="dialog-title">口座を削除（アーカイブ）しますか？</div>
-            <div className="dialog-body">
-              「{deleteTarget.name}」<br /><br />
-              ※ 過去の取引データは残ります<br />
-              ※ 入力画面の選択肢から消えます
-            </div>
-            <div className="dialog-actions">
-              <button className="btn-outline" onClick={() => setDeleteTarget(null)}>キャンセル</button>
-              <button className="btn-danger" onClick={handleDelete}>アーカイブする</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="口座を削除（アーカイブ）しますか？"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+        confirmLabel="アーカイブする"
+      >
+        {deleteTarget && (
+          <>
+            「{deleteTarget.name}」<br /><br />
+            ※ 過去の取引データは残ります<br />
+            ※ 入力画面の選択肢から消えます
+          </>
+        )}
+      </ConfirmDialog>
     </Layout>
   )
 }
