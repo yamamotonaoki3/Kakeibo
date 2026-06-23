@@ -69,6 +69,14 @@ docs: 要件定義書を追加
 
 ---
 
+## UIコンポーネント規約
+
+- `window.confirm()` / `window.alert()` は使用禁止
+- 削除・破壊的操作の確認には必ずアプリ独自の `<ConfirmDialog>` コンポーネントを使用する
+  - ファイル: `frontend/src/components/ConfirmDialog.tsx`
+
+---
+
 ## 技術スタック（参考）
 
 - **Backend:** Java 25 / Spring Boot 4.0.5 / Gradle 9.5.0 (Kotlin DSL) / PostgreSQL 17

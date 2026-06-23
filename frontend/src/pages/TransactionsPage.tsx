@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
+import ConfirmDialog from '../components/ConfirmDialog'
 import client from '../api/client'
 import type { Transaction, Account, Category, TransactionType } from '../types'
 import { CATEGORY_LABELS } from '../types'
@@ -144,24 +145,22 @@ export default function TransactionsPage() {
         )}
       </div>
 
-      {deleteTarget && (
-        <div className="dialog-overlay" onClick={() => setDeleteTarget(null)}>
-          <div className="dialog-box" onClick={e => e.stopPropagation()}>
-            <div className="dialog-title">この取引を削除しますか？</div>
-            <div className="dialog-body">
-              {deleteTarget.date} {CATEGORY_LABELS[deleteTarget.category]}<br />
-              <strong style={{ color: deleteTarget.type === 'INCOME' ? 'var(--color-income)' : 'var(--color-expense)' }}>
-                {deleteTarget.type === 'INCOME' ? '+' : '-'}¥{deleteTarget.amount.toLocaleString()}
-              </strong>
-              {deleteTarget.memo && <><br />{deleteTarget.memo}</>}
-            </div>
-            <div className="dialog-actions">
-              <button className="btn-outline" onClick={() => setDeleteTarget(null)}>キャンセル</button>
-              <button className="btn-danger" onClick={handleDelete}>削除する</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="この取引を削除しますか？"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+      >
+        {deleteTarget && (
+          <>
+            {deleteTarget.date} {CATEGORY_LABELS[deleteTarget.category]}<br />
+            <strong style={{ color: deleteTarget.type === 'INCOME' ? 'var(--color-income)' : 'var(--color-expense)' }}>
+              {deleteTarget.type === 'INCOME' ? '+' : '-'}¥{deleteTarget.amount.toLocaleString()}
+            </strong>
+            {deleteTarget.memo && <><br />{deleteTarget.memo}</>}
+          </>
+        )}
+      </ConfirmDialog>
     </Layout>
   )
 }
