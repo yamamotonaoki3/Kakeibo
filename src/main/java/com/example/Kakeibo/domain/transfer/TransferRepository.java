@@ -14,8 +14,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
            "JOIN FETCH t.fromUser " +
            "JOIN FETCH t.toUser " +
            "WHERE (t.fromUser.id = :userId OR t.toUser.id = :userId) " +
-           "AND (:from IS NULL OR t.transferDate >= :from) " +
-           "AND (:to IS NULL OR t.transferDate <= :to) " +
+           "AND t.transferDate BETWEEN :from AND :to " +
            "ORDER BY t.transferDate DESC, t.createdAt DESC")
     List<Transfer> findByUserIdAndDateRange(
             @Param("userId") Long userId,
@@ -33,8 +32,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
            "JOIN FETCH t.toUser " +
            "WHERE (t.fromUser.id = :userId OR t.toUser.id = :userId) " +
            "AND t.isSettled = false " +
-           "AND (:from IS NULL OR t.transferDate >= :from) " +
-           "AND (:to IS NULL OR t.transferDate <= :to)")
+           "AND t.transferDate BETWEEN :from AND :to")
     List<Transfer> findUnsettledByUserIdAndDateRange(
             @Param("userId") Long userId,
             @Param("from") LocalDate from,
