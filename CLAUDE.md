@@ -74,6 +74,6 @@ docs: 要件定義書を追加
 - **Backend:** Java 25 / Spring Boot 4.0.5 / Gradle 9.5.0 (Kotlin DSL) / PostgreSQL 17
 - **Frontend:** React 19 / TypeScript / Vite
 - **パッケージ:** `com.example.Kakeibo`
-- **DB起動:** `docker compose up -d`
-- **バックエンド起動:** `./gradlew bootRun`
+- **DB起動:** `docker compose up -d`（リポジトリルートで実行）
+- **バックエンド起動:** `cd backend && ./gradlew bootRun`
 - **フロントエンド起動:** `cd frontend && npm run dev`
